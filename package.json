@@ -1,0 +1,35 @@
+{
+  "name": "disney",
+  "version": "1.0.0",
+  "description": "\"# Disney\"",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/msmarinip/Disney.git"
+  },
+  "keywords": [],
+  "author": "Soledad Marini",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/msmarinip/Disney/issues"
+  },
+  "homepage": "https://github.com/msmarinip/Disney#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "express-validator": "^6.14.2",
+    "jsonwebtoken": "^8.5.1",  
+    "pg": "^8.7.3",
+    "sequelize": "^6.21.3"
+  },
+  "devDependencies": {
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.19"
+  }
+}
