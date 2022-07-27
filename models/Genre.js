@@ -11,7 +11,7 @@ const genre = (sequelize) => {
             type: DataTypes.STRING,
             allowNull: true
         }
-    });
+    }, { timestamps: false });
 }
 
 module.exports = genre;

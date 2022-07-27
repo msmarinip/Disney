@@ -10,7 +10,7 @@ const movie = (sequelize) => {
         genreId: {
             type: Sequelize.INTEGER,
             references: {
-                model: 'genre',
+                model: 'genres',
                 key: 'id'
             }
         },
@@ -33,7 +33,7 @@ const movie = (sequelize) => {
             allowNull: false,
             defaultValue: true
         }
-    });
+    }, { timestamps: false });
 }
 
 module.exports = movie;

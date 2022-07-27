@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
-const { userCreate, userLogin } = require('../controllers/user');
-const { validateFields } = require('../middlewares/validateFields');
+const { createUser, loginUser } = require('../controllers/user');
+const { validateFields } = require('../middlewares/index.js');
 const { User, Op } = require('../database/config.js');
 const router = Router();
 
@@ -27,7 +27,7 @@ router.post(
         check('password').isLength({ min: 6 }).withMessage('La contraseña debe tener al menos 6 caracteres'),
         validateFields
     ],
-    userCreate
+    createUser
     )
 router.post(
     '/login',
@@ -37,7 +37,7 @@ router.post(
         check('password','Password is required').not().isEmpty(),
         validateFields
     ],
-    userLogin
+    loginUser
     )
 
 

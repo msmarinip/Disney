@@ -2,7 +2,7 @@ const { User, Op } = require('../database/config.js');
 const { generateJWT } = require("../helpers/jwt");
 
 
-const userCreate = async (req, res) => {
+const createUser = async (req, res) => {
     const { name, email, password } = req.body;
     try {
         const bcrypt = require('bcryptjs');
@@ -24,24 +24,22 @@ const userCreate = async (req, res) => {
     } catch (error) {
         res.status(500).json({
             ok: false,
-            msg: 'Error inesperado',
+            msg: 'Unexpected error',
             error
         });
     }
 }
 
-const userLogin = async (req, res) => {
+const loginUser = async (req, res) => {
     const { email, password } = req.body;
-    console.log(req.body);
     try {
         const user = await User.findOne({ 
             where: { email: {[Op.iLike]:`${email}`}}
         });
-        console.log(1,user)
         if (!user) {
             return res.status(400).json({
                 ok: false,
-                msg: 'Usuario o contraseña incorrectos'
+                msg: 'Invalid user or password'
             });
         }
         const bcrypt = require('bcryptjs');
@@ -49,7 +47,7 @@ const userLogin = async (req, res) => {
         if (!validPassword) {
             return res.status(400).json({
                 ok: false,
-                msg: 'Usuario o contraseña incorrectos'
+                msg: 'Invalid user or password'
             });
         }
         const token = await generateJWT(user.id,user.name)
@@ -62,12 +60,12 @@ const userLogin = async (req, res) => {
     } catch (error) {
         res.status(500).json({
             ok: false,
-            msg: 'Error inesperado',
+            msg: 'Unexpected error',
             error
         });
     }
 }
 module.exports = {
-    userCreate,
-    userLogin
+    createUser,
+    loginUser
 }
