@@ -2,24 +2,30 @@ const { Router } = require('express');
 const { check } = require('express-validator');
 const { validateFields, validateJWT } = require('../middlewares/index.js');
 const { Character, Op } = require('../database/config.js');
-const { createCharacter, updateCharacter } = require('../controllers/character.js');
+const { createCharacter, updateCharacter, deleteCharacter, getCharacters, getByCharacter } = require('../controllers/character.js');
 
 const router = Router();
-// const multer  = require('multer');
-
-// const storage = multer.diskStorage({
-//     destination: (req, file, cb) => {
-//         cb(null, '../uploads/characters');
-//     },
-//     filename: (req, file, cb) => {
+const multer  = require('multer');
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, './uploads/characters');
+    },
+    filename: (req, file, cb) => {
         
-//         const ext = file.originalname.split('.').pop();
-//         cb(null, `${Date.now()}.${ext}`);
-//     }
-// })
+        const ext = file.originalname.split('.').pop();
+        cb(null, `${Date.now()}.${ext}`);
+    }
+})
 
-// const upload = multer({ storage }).single('image')
+const upload = multer({ storage });
 
+router.post(
+    '/image', 
+    upload.single('image'),
+    (req, res) => {
+        res.send({fileName: req.file.filename});
+    }
+);
 router.post(
     '/',
     [
@@ -37,8 +43,7 @@ router.post(
         check('weight', 'Weight must be greater than 0').isInt({ min: 0 }),
         check('movies', 'Movies must be an array').isArray(),
         validateFields,
-        validateJWT,
-        // upload
+        validateJWT
         
     ],
     createCharacter
@@ -59,5 +64,11 @@ router.put(
     ],
     updateCharacter
 );
+
+router.delete('/:id', validateJWT, deleteCharacter);
+
+router.get('/', validateJWT, getCharacters);
+router.get('/:id', validateJWT, getByCharacter);
+
 
 module.exports = router;

@@ -1,13 +1,14 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
 const { Movie, Op } = require('../database/config.js');
+
+const { validateFields } = require('../middlewares/validateFields.js');
+const { validateJWT } = require('../middlewares/validateJWT.js');
+const { createMovie, updateMovie, deleteMovie, getMovies, getByMovie } = require('../controllers/movie');
+
 const router = Router();
 
 const multer  = require('multer');
-const { validateFields } = require('../middlewares/validateFields.js');
-const { validateJWT } = require('../middlewares/validateJWT.js');
-const { createMovie, updateMovie, deleteMovie, getMovies } = require('../controllers/movie');
-
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, './uploads/movies');
@@ -77,6 +78,8 @@ router.put(
 router.delete('/:id', validateJWT, deleteMovie);
 
 router.get('/', validateJWT, getMovies)
+
+router.get('/:id', validateJWT, getByMovie)
 
 
 module.exports = router;

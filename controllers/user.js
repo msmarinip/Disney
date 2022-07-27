@@ -1,5 +1,6 @@
 const { User, Op } = require('../database/config.js');
 const { generateJWT } = require("../helpers/jwt");
+const { emailSender } = require('../helpers/sendMail.js');
 
 
 const createUser = async (req, res) => {
@@ -15,6 +16,10 @@ const createUser = async (req, res) => {
         });
 
         const token = await generateJWT(user.id,user.name)
+
+        const subject = `${name}, welcome to the Disney Api`;
+        const html = `<h1>Welcome ${name}</h1>`;
+        await emailSender(subject, html, email)
 
         res.json({
             ok: true,
@@ -51,6 +56,8 @@ const loginUser = async (req, res) => {
             });
         }
         const token = await generateJWT(user.id,user.name)
+
+
 
         res.json({
             ok: true,

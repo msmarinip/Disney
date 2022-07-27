@@ -1,4 +1,4 @@
-const { Movie, Character, conn } = require('../database/config.js');
+const { Movie, Character, Genre, conn, Op } = require('../database/config.js');
 
 const createMovie = async (req, res) => {
     const { title, genreId, image, date, score, isMovie, characters } = req.body;
@@ -119,13 +119,114 @@ const deleteMovie = async (req, res) => {
 };
 
 const getMovies = async (req, res) => {
+    const {name: title, order, genre} = req.query;
+    const orderBy = order ? order : 'ASC';
     try {
-        const movies = await Movie.findAll({
-            attributes: ['title', 'image', 'date'],
-          });
+        const movies = 
+            title ? await getMoviesByTitle(title, orderBy) :
+            genre ? await getMoviesByGenre(genre, orderBy) :
+            await getMoviesAll(orderBy);
         res.json({
             ok: true,
             movies
+        });
+    } catch (error) {
+        res.status(500).json({
+            ok: false,
+            msg: 'Unexpected error',
+            error
+        });
+    }
+}
+
+const getMoviesAll = (order) => {
+    return Movie.findAll({
+        attributes: ['title', 'image', 'date'],
+        order: [
+            ['title', order]
+          ]
+    });
+}
+
+const getMoviesByGenre = async (genre, order) => {
+    
+    try {
+        const movies = await Movie.findAll({
+            where: {
+                genreId: genre
+            },
+            attributes: ['id','title', 'image', 'date', 'score', 'isMovie'],
+            include: [{
+                model: Character,
+                attributes: ['id','name', 'image', 'age', 'weight'],
+                through: {
+                    attributes: []
+                  } 
+            },{
+                model: Genre,
+                attributes: ['id','name']
+            }],
+            order: [
+                [Genre, 'name', order]
+              ]
+        });
+
+        return movies;
+
+     } catch (error) {
+        console.log(error);
+    }
+}
+
+const getMoviesByTitle = async (title, order) => {
+    try {
+        const movies = await Movie.findAll({
+            where: {
+                title: {[Op.iLike]: `%${title}%`}
+            },
+            attributes: ['id','title', 'image', 'date', 'score', 'isMovie'],
+            include: [{
+                model: Character,
+                attributes: ['id','name', 'image', 'age', 'weight'],
+                through: {
+                    attributes: []
+                  } 
+            },{
+                model: Genre,
+                attributes: ['id','name']
+            }],
+            order: [['title', order]]
+            
+        });
+
+        return movies;
+
+     } catch (error) {
+        console.log(error);
+    }
+}
+
+
+const getByMovie = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const movie = await Movie.findOne({
+            where: {
+                id: parseInt(id)
+            },
+            attributes: ['id','title', 'image', 'date', 'score', 'isMovie'],
+            include: [{
+                model: Character,
+                attributes: ['name', 'image', 'age', 'weight'],
+                through: {
+                    attributes: []
+                  } 
+            }],
+            
+        });
+        res.json({
+            ok: true,
+            movie
         });
     } catch (error) {
         res.status(500).json({
@@ -140,5 +241,6 @@ module.exports = {
     createMovie,
     updateMovie,
     deleteMovie,
-    getMovies
+    getMovies,
+    getByMovie
 }
