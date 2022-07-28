@@ -7,7 +7,10 @@ const character = ( sequelize ) => {
         name: {
             type: DataTypes.STRING,
             unique: true,
-            allowNull: false
+            allowNull: false,
+            validate: {
+                notEmpty: true
+            }
         },
         image: {
             type: DataTypes.STRING,
@@ -18,7 +21,7 @@ const character = ( sequelize ) => {
             allowNull: true
         },
         weight: {
-            type: DataTypes.STRING,
+            type: DataTypes.FLOAT,
             allowNull: true
         }
     }, { timestamps: false })
